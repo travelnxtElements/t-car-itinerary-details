@@ -1,0 +1,148 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../t-notify/t-notify.html">
+<link rel="import" href="t-shopping-cart-remove-all-api.html">
+<link rel="import" href="t-shopping-cart-add-item-api.html">
+<link rel="import" href="t-car-itinerary-details.html">
+<!--
+A comment describing this element
+
+Example:
+
+    <my-elem></my-elem>
+
+Example:
+
+    <my-elem>
+      <h2>Hello my-elem</h2>
+    </my-elem>
+
+@demo demo/index.html
+-->
+<dom-module id="t-car-itinerary-details-page">
+    <template>
+        <style>
+        :host {
+            display: block;
+        }
+        </style>
+
+        <h1>Itinerary Details</h1>
+
+        <t-shopping-cart-remove-all-api
+            id="removeCartApi" 
+            loading={{loading}} 
+            api-base-url="{{apiBaseUrl}}" 
+            api-relative-url="api/ShoppingCart/remove/all" 
+            auth-token="{{authToken}}"
+            on-t-shopping-cart-remove-all-api-success="onRemoveCartSuccess"
+            on-t-shopping-cart-remove-all-api-error="onRemoveCartError">
+        </t-shopping-cart-remove-all-api>
+
+        <t-shopping-cart-add-item-api
+            id="addCartApi" 
+            loading={{loading}} 
+            api-base-url="{{apiBaseUrl}}" 
+            api-relative-url="api/ShoppingCart/add" 
+            auth-token="{{authToken}}"
+            on-t-shopping-cart-add-item-api-success="onAddCartSuccess"
+            on-t-shopping-cart-add-item-api-error="onAddCartError">
+        </t-shopping-cart-add-item-api>
+
+        <t-car-itinerary-details id="itineraryView">
+        </t-car-itinerary-details>
+
+        <t-button id="btnContinue"></t-button>
+
+    </template>
+    <script>
+    Polymer({
+        is: 't-car-itinerary-details-page',
+
+        observers : [
+            '_addItemToCart(itineraryId, searchId)'
+        ],
+
+
+        properties: {
+
+            /*
+             * <p>This string is query string containing token value</p>
+             */
+            authToken: {
+                type: String,
+                value: ''
+            },
+
+            /*
+             * <p>This property holds the value of api base URL</p>
+             */
+            apiBaseUrl: {
+                type: String,
+                value: ''
+            },
+
+            /*
+             * <p>This property holds the value of web api URL format</p>
+             */
+            apiUrlFormat: {
+                type: String,
+                value: ''
+            },
+
+            /*
+             * <p>This property holds the value of web api URL format</p>
+             */
+            itineraryId: {
+                type: String,
+                value: ''
+            },
+
+            /*
+             * <p>This property holds the value of web api URL format</p>
+             */
+            searchId: {
+                type: String,
+                value: ''
+            }
+        },
+
+        _addItemToCart: function () {
+        	if (this.itineraryId && this.searchId) {
+        		this.$.removeCartApi.remove();
+        	}
+        },
+
+        onRemoveCartSuccess: function (e) {
+            this.$.addCartApi.add({
+                searchId: this.searchId,
+                itineraryId: this.itineraryId
+            });        	
+        },
+
+        onRemoveCartError: function (e) {
+        	
+        },
+
+        onAddCartSuccess: function (e) {
+            if (!e.detail.addToCartItemResult || !e.detail.addToCartItemResult.length) {
+                throw Error('failed to add itinerary in the cart!');
+            }
+
+            var addToCartItem = e.detail.addToCartItemResult[0];
+
+            if (addToCartItem.fareChange && addToCartItem.fareChange.amount) {
+                this.notifyFareChange();
+                return;
+            }
+
+            if (addToCartItem.inventory) {
+                this.$.itineraryView.itinerary = addToCartItem.inventory;
+            }
+        },
+
+        onAddCartError: function (e) {
+                
+        }
+    });
+    </script>
+</dom-module>

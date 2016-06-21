@@ -1,29 +1,22 @@
 <!doctype html>
 <html>
-  <head>
+
+<head>
     <title>t-car-itinerary-details demo</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../t-car-itinerary-details-page.html">
+</head>
 
-    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
-    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+<body>
+    <t-car-itinerary-details-page    
+        api-base-url="http://demo.travelnxt.com/"
+        auth-token="ln2s0ptwg35lck4rfjug0h0x"
+        search-id="f9cee634-74b8-43d5-a201-a6b37a83c951"
+        itinerary-id="NF9fZjljZWU2MzQtNzRiOC00M2Q1LWEyMDEtYTZiMzdhODNjOTUx"
+        api-url-format="/api/Session/SESSIONKEY">
+    </t-car-itinerary-details-page>
+</body>
 
-    <link rel="import" href="../t-car-itinerary-details.html">
-
-    <style is="custom-style" include="demo-pages-shared-styles">
-    </style>
-  </head>
-  <body>
-
-    <div class="vertical-section-container centered">
-      <h3>Basic t-car-itinerary-details Demo</h3>
-      <demo-snippet>
-        <template>
-          <t-car-itinerary-details></t-car-itinerary-details>
-        </template>
-      </demo-snippet>
-    </div>
-
-  </body>
 </html>
