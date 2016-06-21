@@ -33,106 +33,57 @@
           }
         </style>
         <div class="imageArea">
-            <t-image src="[[imageUrl]]"></t-image>
+            <t-image src="[[itinerary.heroImageUrl]]"></t-image>
         </div>
         <br>
-        <div><b>[[name]]</b></div>
+        <div><b>[[itinerary.name]]</b></div>
         <br>
-        <div><b>[[category]]</b></div>
+        <div><b>[[itinerary.category]]</b></div>
         <br>
         <div class="logoArea">
-            <t-image src="[[logo]]"></t-image>
+            <t-image src="[[itinerary.brand.logo]]"></t-image>
         </div>
         <br>
-        <div>[[capacity]]</div>
-        <div>[[baggage]]</div>
-        <div>[[airConditioning]]</div>
-        <div>[[transmission]]</div>
-        <div>[[doors]]</div>
-        <br>
-        
+        <div>[[itinerary.capacity]]</div>
+        <div>[[itinerary.baggage]]</div>
+        <div>[[itinerary.airConditioning]]</div>
+        <div>[[itinerary.transmission]]</div>
+        <div>[[itinerary.doors]]</div>
+        <br>        
         <div><b>pick-up from</b></div>
-        <div>[[pickupAddress]]</div>
+        <div>[[itinerary.pickupInfo.address]]</div>
         <br>
         <div><b>drop-off to</b></div>
-        <div>[[dropoffAddress]]</div>
+        <div>[[itinerary.dropoffInfo.address]]</div>
+        <br>
+        <a href="#">policy</a>
+        <br>        
         <br>        
         <t-faredetails id="fareDetails" is-collapsible></t-faredetails>
     </template>
     <script>
-    Polymer({
+      Polymer({
 
-        is: 't-car-itinerary-details',
+          is: 't-car-itinerary-details',
 
-        properties: {
+          properties: {
 
-            name:{
-              type: String,
-              value: ''
-            },
+              itinerary: {
+                  type: Object,
+                  value: null,
+                  observer: '_onItineraryUpdate'
+              },
+          },
 
-            category:{
-              type: String,
-              value: ''
-            },
+          _onItineraryUpdate: function() {
+              if (!this.itinerary) {
+                  return;
+              }
+              if (this.itinerary && this.itinerary.fare) {
+                  this.$.fareDetails.data = this.itinerary.fare.components;
+              }
+          }
 
-            brand:{
-              type: String,
-              value: ''
-            },
-
-            imageUrl:{
-                type: String,
-                value: ''
-            },
-
-            pickupAddress: {
-                type: String,
-                value: ''
-            },
-
-            dropoffAddress: {
-                type: String,
-                value: ''
-            },
-
-            itinerary: {
-                type: Object,
-                value: null,
-                observer: '_onItineraryUpdate'
-            },
-        },
-
-        _onItineraryUpdate: function() {
-            if (!this.itinerary) {
-                return;
-            }
-            console.log(this.itinerary);
-            this._setItineraryProperties();
-        },
-
-        _setItineraryProperties: function() {
-            if (!this.itinerary) {
-                return;
-            }
-
-            this.name = this.itinerary.name;
-            this.category = this.itinerary.category;
-
-            this.pickupAddress = this.itinerary.pickupInfo.address;
-            this.dropoffAddress = this.itinerary.dropoffInfo.address;
-
-            this.imageUrl = this.itinerary.heroImageUrl;
-            this.logo = this.itinerary.brand.logo;
-
-            this.capacity = this.itinerary.capacity;
-            this.baggage = this.itinerary.baggage;
-            this.airConditioning = this.itinerary.airConditioning;
-            this.transmission = this.itinerary.transmission;
-            this.doors = this.itinerary.doors;
-            this.$.fareDetails.data = this.itinerary.fare.components;
-        }
-
-    });
+      });
     </script>
 </dom-module>

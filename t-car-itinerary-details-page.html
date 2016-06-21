@@ -103,6 +103,12 @@ Example:
             searchId: {
                 type: String,
                 value: ''
+            },
+
+            itinerary: {
+                type: Object,
+                value: null,
+                observer: '_onItineraryUpdate'
             }
         },
 
@@ -110,6 +116,15 @@ Example:
         	if (this.itineraryId && this.searchId) {
         		this.$.removeCartApi.remove();
         	}
+        },
+
+        _onItineraryUpdate: function () {
+            if (this.itinerary) {
+                if (this.itinerary.fare) {
+                    this.itinerary.fare = null;
+                }
+                this.$.itineraryView.itinerary = this.itinerary;
+            }
         },
 
         onRemoveCartSuccess: function (e) {
