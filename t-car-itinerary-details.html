@@ -6,7 +6,10 @@
         <style include="iron-flex"></style>
         <style include="travel-element-styles">
           :host {
-              display: block;
+            display: block;
+            margin: 10px;
+            border: solid black thin;
+            padding: 5px;
           }
           
           .imageArea {
@@ -78,9 +81,9 @@
               if (!this.itinerary) {
                   return;
               }
-              if (this.itinerary && this.itinerary.fare) {
-                  this.$.fareDetails.data = this.itinerary.fare.components;
-              }
+              this.$.fareDetails.data = this.itinerary && this.itinerary.fare 
+                                      ? this.itinerary.fare.components 
+                                      : null;
           }
 
       });

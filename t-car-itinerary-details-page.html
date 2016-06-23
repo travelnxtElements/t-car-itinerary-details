@@ -24,6 +24,10 @@ Example:
         :host {
             display: block;
         }
+        t-button{
+            display: block;
+            margin: 10px;
+        }
         </style>
 
         <h1>Itinerary Details</h1>
@@ -41,7 +45,7 @@ Example:
         <t-shopping-cart-add-item-api
             id="addCartApi" 
             loading={{loading}} 
-            api-base-url="{{apiBaseUrl}}" 
+            api-base-url="{{apiBaseUrl}}" s
             api-relative-url="api/ShoppingCart/add" 
             auth-token="{{authToken}}"
             on-t-shopping-cart-add-item-api-success="onAddCartSuccess"
@@ -51,7 +55,7 @@ Example:
         <t-car-itinerary-details id="itineraryView">
         </t-car-itinerary-details>
 
-        <t-button id="btnContinue"></t-button>
+        <t-button id="btnContinue" label="continue"></t-button>
 
     </template>
     <script>
@@ -59,7 +63,7 @@ Example:
         is: 't-car-itinerary-details-page',
 
         observers : [
-            '_addItemToCart(itineraryId, searchId)'
+            '_addItemToCart(itinerary, searchId)'
         ],
 
 
@@ -69,51 +73,39 @@ Example:
              * <p>This string is query string containing token value</p>
              */
             authToken: {
-                type: String,
-                value: ''
+                type: String
             },
 
             /*
              * <p>This property holds the value of api base URL</p>
              */
             apiBaseUrl: {
-                type: String,
-                value: ''
+                type: String
             },
 
             /*
              * <p>This property holds the value of web api URL format</p>
              */
             apiUrlFormat: {
-                type: String,
-                value: ''
-            },
-
-            /*
-             * <p>This property holds the value of web api URL format</p>
-             */
-            itineraryId: {
-                type: String,
-                value: ''
+                type: String
             },
 
             /*
              * <p>This property holds the value of web api URL format</p>
              */
             searchId: {
-                type: String,
-                value: ''
+                type: String
             },
 
             itinerary: {
                 type: Object,
-                value: null,
-                observer: '_onItineraryUpdate'
+                value: null
             }
         },
 
         _addItemToCart: function () {
-        	if (this.itineraryId && this.searchId) {
+        	if (this.itinerary && this.searchId) {
+                this._onItineraryUpdate();
         		this.$.removeCartApi.remove();
         	}
         },
@@ -130,7 +122,7 @@ Example:
         onRemoveCartSuccess: function (e) {
             this.$.addCartApi.add({
                 searchId: this.searchId,
-                itineraryId: this.itineraryId
+                itineraryId: this.itinerary.id
             });        	
         },
 
@@ -144,11 +136,6 @@ Example:
             }
 
             var addToCartItem = e.detail.addToCartItemResult[0];
-
-            if (addToCartItem.fareChange && addToCartItem.fareChange.amount) {
-                this.notifyFareChange();
-                return;
-            }
 
             if (addToCartItem.inventory) {
                 this.$.itineraryView.itinerary = addToCartItem.inventory;
