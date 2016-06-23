@@ -63,7 +63,7 @@ Example:
         is: 't-car-itinerary-details-page',
 
         observers : [
-            '_addItemToCart(itinerary, searchId)'
+            '_addItemToCart(itinerary, searchId, searchCriteria)'
         ],
 
 
@@ -100,11 +100,16 @@ Example:
             itinerary: {
                 type: Object,
                 value: null
+            },
+
+            searchCriteria: {
+                type: Object,
+                value: null
             }
         },
 
-        _addItemToCart: function () {
-        	if (this.itinerary && this.searchId) {
+        _addItemToCart: function (itinerary, searchId, searchCriteria) {
+        	if (itinerary && searchId && searchCriteria) {
                 this._onItineraryUpdate();
         		this.$.removeCartApi.remove();
         	}
@@ -117,6 +122,10 @@ Example:
                 }
                 this.$.itineraryView.itinerary = this.itinerary;
             }
+        },
+
+        _getItinerarySchedule: function () {
+            
         },
 
         onRemoveCartSuccess: function (e) {
