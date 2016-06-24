@@ -1,5 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../t-image/t-image.html">
+<link rel="import" href="../t-shared-lib/t-date-behavior.html">
 
 <dom-module id="t-car-itinerary-details">
     <template>
@@ -53,10 +54,12 @@
         <div>[[itinerary.doors]]</div>
         <br>        
         <div><b>pick-up from</b></div>
-        <div>[[itinerary.pickupInfo.address]]</div>
+        <div><b>Date - </b>[[pickupDate]]</div>
+        <div>[[pickupAddress]]</div>
         <br>
         <div><b>drop-off to</b></div>
-        <div>[[itinerary.dropoffInfo.address]]</div>
+        <div><b>Date - </b>[[dropoffDate]]</div>
+        <div>[[dropoffAddress]]</div>
         <br>
         <a href="#">policy</a>
         <br>        
@@ -64,7 +67,6 @@
         <t-faredetails 
           id="fareDetails"
           is-collapsible
-          base-fare-label="Avg. per day rate x 2"
           itinerary-fare-label="Car Rental"></t-faredetails>
     </template>
     <script>
@@ -72,22 +74,72 @@
 
           is: 't-car-itinerary-details',
 
+          behaviors: [
+              TravelNxt.Behaviors.DateBehavior
+          ],
+
+          observers : [
+              '_onItineraryUpdate(itinerary, searchCriteria)'
+          ],
+
           properties: {
 
               itinerary: {
-                  type: Object,
-                  value: null,
-                  observer: '_onItineraryUpdate'
+                  type: Object
               },
+
+              searchCriteria: {
+                  type: Object
+              },
+
+              pickupDate: {
+                  type: String
+              },
+
+              dropoffDate: {
+                  type: String
+              },
+
+              pickupAddress: {
+                  type: String
+              },
+
+              dropoffAddress: {
+                  type: String
+              }
           },
 
-          _onItineraryUpdate: function() {
-              if (!this.itinerary) {
+          _onItineraryUpdate: function(itinerary, searchCriteria) {
+              if (!itinerary || !searchCriteria) {
                   return;
               }
-              this.$.fareDetails.data = this.itinerary && this.itinerary.fare 
-                                      ? this.itinerary.fare.components 
+
+              this._setDetails();
+
+              this.$.fareDetails.data = itinerary && itinerary.fare 
+                                      ? itinerary.fare.components 
                                       : null;
+          },
+
+          _setDetails: function () {
+              if (!this.itinerary || !this.searchCriteria) {
+                  return;
+              }
+
+              this.pickupAddress = this.itinerary.pickupInfo.address;
+
+              this.dropoffAddress = this.itinerary.pickupInfo.address === this.itinerary.dropoffInfo.address 
+                                  ? 'Same as pickup' 
+                                  : this.itinerary.dropoffInfo.address;
+              
+              var formattedDate = this._getDateComponents(this.searchCriteria.pickupDate);
+              this.pickupDate = formattedDate.date  + ' ' + formattedDate.shortMonth + ' ' + this.searchCriteria.pickupTime;
+              
+              formattedDate = this._getDateComponents(this.searchCriteria.dropoffDate);
+              this.dropoffDate = formattedDate.date + ' ' + formattedDate.shortMonth + ' ' + this.searchCriteria.dropoffTime;
+
+              this.$.fareDetails.baseFareLabel = 'Avg. per day rate x ' + this._dateDiff(this.pickupDate, this.dropoffDate);
+
           }
 
       });
