@@ -100,7 +100,7 @@ Example:
 
             itinerary: {
                 type: Object,
-                value: null
+                notify: true
             },
 
             searchCriteria: {
@@ -144,6 +144,7 @@ Example:
 
             if (addToCartItem.inventory) {
                 this.$.itineraryView.itinerary = addToCartItem.inventory;
+                this.itinerary.fare = addToCartItem.inventory.fare;
             }
         },
 
