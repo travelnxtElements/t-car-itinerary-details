@@ -57,7 +57,7 @@ Example:
         <t-car-itinerary-details id="itineraryView">
         </t-car-itinerary-details>
 
-        <t-button id="btnContinue" label="continue"></t-button>
+        <t-button id="btnContinue" label="continue" on-tap="onPricingSuccess"></t-button>
 
     </template>
     <script>
@@ -149,6 +149,10 @@ Example:
 
         onAddCartError: function (e) {
                 
+        },
+
+        onPricingSuccess: function () {            
+            this.fire('pricing-success');
         }
     });
     </script>
