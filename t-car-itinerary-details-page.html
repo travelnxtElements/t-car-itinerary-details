@@ -30,9 +30,9 @@ Example:
         }
         </style>
 
-        <content select="t-header"></content> 
-
         <t-notify id="notify"></t-notify>
+
+        <content select="t-header"></content>
 
         <t-shopping-cart-remove-all-api
             id="removeCartItemApi" 
@@ -65,7 +65,7 @@ Example:
         is: 't-car-itinerary-details-page',
 
         observers : [
-            '_addItemToCart(itinerary, searchId, searchCriteria)'
+            '_addItemToCart(itinerary, searchCriteria, visible)'
         ],
 
         properties: {
@@ -91,13 +91,6 @@ Example:
                 type: String
             },
 
-            /*
-             * <p>This property holds the value of web api URL format</p>
-             */
-            searchId: {
-                type: String
-            },
-
             itinerary: {
                 type: Object,
                 notify: true
@@ -106,18 +99,33 @@ Example:
             searchCriteria: {
                 type: Object,
                 value: null
+            },
+
+            visible: {
+                type: Boolean,
+                value: false,
+                notify: true
+            },
+
+            queryParams: {
+                type: Object,
+                notify: true
             }
         },
 
-        _addItemToCart: function (itinerary, searchId, searchCriteria) {
-        	if (itinerary && searchId && searchCriteria) {
-                if (itinerary.fare) {
-                    itinerary.fare = null;
-                }
-                this.$.itineraryView.itinerary = itinerary;
-                this.$.itineraryView.searchCriteria = searchCriteria;
-        		this.$.removeCartItemApi.remove();
-        	}
+        _addItemToCart: function (itinerary, searchCriteria, visible) {
+        	if (!itinerary || !this.queryParams.searchId || !searchCriteria || !visible) {
+                return;
+            }
+
+            if (itinerary.fare) {
+                itinerary.fare = null;
+            }
+
+            this.$.itineraryView.itinerary = itinerary;
+            this.$.itineraryView.searchCriteria = searchCriteria;
+
+    		this.$.removeCartItemApi.remove();
         },
 
         _getItinerarySchedule: function () {
@@ -126,7 +134,7 @@ Example:
 
         onRemoveCartSuccess: function (e) {
             this.$.addCartApi.add({
-                searchId: this.searchId,
+                searchId: this.queryParams.searchId,
                 itineraryId: this.itinerary.id
             });        	
         },
