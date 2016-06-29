@@ -17,7 +17,7 @@
             border-bottom: 1px dotted;
          }
         </style>
-        <t-image sizing="contain" class="imageArea border-bottom" height="120" src="[[itinerary.heroImageUrl]]"></t-image>
+        <t-image hidden$="[[isCollapsible]]" sizing="contain" class="imageArea border-bottom" height="120" src="[[itinerary.heroImageUrl]]"></t-image>
         <div class="logo-area font-semi section-small primary-light-text left-section">
           <div class="font-16 item">[[itinerary.name]]</div>
           <div class="font-12 item">[[itinerary.category]]</div>
@@ -112,21 +112,10 @@
                   type: Object
               },
 
-/*              pickupDate: {
-                  type: String
-              },
-
-              dropoffDate: {
-                  type: String
-              },
-
-              pickupAddress: {
-                  type: String
-              },
-
-              dropoffAddress: {
-                  type: String
-              }*/
+              isCollapsible: {
+                  type: Boolean,
+                  value: false                  
+              }
           },
 
 
@@ -145,14 +134,10 @@
                   return;
               }
 
-              this._setDetails();
-
-              this.$.fareDetails.data = itinerary && itinerary.fare 
-                                      ? itinerary.fare.components 
-                                      : null;
+              this.setDetails();
           },
 
-          _setDetails: function () {
+          setDetails: function () {
               if (!this.itinerary || !this.searchCriteria) {
                   return;
               }
@@ -170,6 +155,9 @@
 
               this.$.fareDetails.baseFareLabel = 'Avg. per day rate x ' + this._dateDiff(this.pickupDate, this.dropoffDate);
 
+              if (this.itinerary.fare && this.itinerary.fare.components) {
+                  this.$.fareDetails.data = this.itinerary.fare.components;
+              }
           }
 
       });
