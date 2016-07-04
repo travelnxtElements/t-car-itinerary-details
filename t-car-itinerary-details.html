@@ -155,9 +155,12 @@
 
               if (this.itinerary.fare && this.itinerary.fare.components) {
                   this.$.fareDetails.data = this.itinerary.fare.components;
-              }
+              } else {
+                this.$.fareDetails.data = null;
+            }
           }
 
       });
     </script>
 </dom-module>
+  
