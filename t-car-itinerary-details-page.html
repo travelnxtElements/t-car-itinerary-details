@@ -1,5 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../t-notify/t-notify.html">
+<link rel="import" href="../t-shared-lib/t-date-behavior.html">
 <link rel="import" href="t-shopping-cart-remove-all-api.html">
 <link rel="import" href="t-shopping-cart-add-item-api.html">
 <link rel="import" href="t-car-itinerary-details.html">
@@ -57,6 +58,12 @@ Example:
         <t-car-itinerary-details id="itineraryView">
         </t-car-itinerary-details>
 
+        <t-faredetails 
+          id="fareDetails"
+          is-collapsible
+          itinerary-fare-label="Car Rental">
+        </t-faredetails>
+
         <t-button id="btnContinue" label="continue" on-tap="onBtnContinueClick"></t-button>
 
     </template>
@@ -66,6 +73,10 @@ Example:
 
         observers : [
             '_addItemToCart(itinerary, searchCriteria, visible)'
+        ],
+
+        behaviors: [
+              TravelNxt.Behaviors.DateBehavior
         ],
 
         properties: {
@@ -155,6 +166,7 @@ Example:
             if (addToCartItem.inventory) {
                 this.$.itineraryView.itinerary = addToCartItem.inventory;
                 this.itinerary.fare = addToCartItem.inventory.fare;
+                this._setFareDetails();
             }
 
             this.$.btnContinue.disabled = false;
@@ -169,6 +181,24 @@ Example:
                 return;
             }
             this.fire('pricing-success');
+        },
+
+        _setFareDetails: function () {
+            if (!this.itinerary || !this.searchCriteria) {
+                return;
+            }
+
+            var formattedDate = this._getDateComponents(this.searchCriteria.pickupDate);
+            this.pickupDate = formattedDate.date + ' ' + formattedDate.shortMonth + ' ' + this.searchCriteria.pickupTime;
+
+            formattedDate = this._getDateComponents(this.searchCriteria.dropoffDate);
+            this.dropoffDate = formattedDate.date + ' ' + formattedDate.shortMonth + ' ' + this.searchCriteria.dropoffTime;
+
+            this.$.fareDetails.baseFareLabel = 'Avg. per day rate x ' + this._dateDiff(this.pickupDate, this.dropoffDate);
+
+            if (this.itinerary.fare && this.itinerary.fare.components) {
+                this.$.fareDetails.data = this.itinerary.fare.components;
+            }
         }
     });
     </script>
