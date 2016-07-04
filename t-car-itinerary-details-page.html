@@ -67,12 +67,12 @@ Example:
         <t-button id="btnContinue" label="continue" on-tap="onBtnContinueClick"></t-button>
 
     </template>
-    <script>
+<script>
     Polymer({
         is: 't-car-itinerary-details-page',
 
-        observers : [
-            '_addItemToCart(itinerary, searchCriteria, visible)'
+        observers: [
+            '_addItemToCart(queryParams.carId,carResults)'
         ],
 
         behaviors: [
@@ -102,9 +102,8 @@ Example:
                 type: String
             },
 
-            itinerary: {
-                type: Object,
-                notify: true
+            carResults: {
+                type: Object
             },
 
             searchCriteria: {
@@ -124,39 +123,43 @@ Example:
             }
         },
 
-        _addItemToCart: function (itinerary, searchCriteria, visible) {
-            if (!itinerary || !this.queryParams.searchId || !searchCriteria || !visible) {
+        _addItemToCart: function(carId, carResults) {
+            if (!this.carResults || !this.queryParams.searchId || !this.searchCriteria || !carId) {
                 return;
             }
 
+            this.itinerary = this.carResults.inventories.find(function(item) {
+                return item.id === carId;
+            });
+
             this.$.btnContinue.disabled = true;
 
-            if (itinerary.fare) {
-                itinerary.fare = null;
+            if (this.itinerary.fare) {
+                this.itinerary.fare = null;
             }
 
-            this.$.itineraryView.itinerary = itinerary;
-            this.$.itineraryView.searchCriteria = searchCriteria;
+            this.$.itineraryView.itinerary = this.itinerary;
+            this.$.itineraryView.searchCriteria = this.searchCriteria;
 
             this.$.removeCartItemApi.remove();
         },
 
-        _getItinerarySchedule: function () {
-            
+        _getItinerarySchedule: function() {
+
         },
 
-        onRemoveCartSuccess: function (e) {
+        onRemoveCartSuccess: function(e) {
             this.$.addCartApi.add({
                 searchId: this.queryParams.searchId,
                 itineraryId: this.itinerary.id
-            });         
+            });
         },
 
-        onRemoveCartError: function (e) {
-            
+        onRemoveCartError: function(e) {
+
         },
 
-        onAddCartSuccess: function (e) {
+        onAddCartSuccess: function(e) {
             if (!e.detail.addToCartItemResult || !e.detail.addToCartItemResult.length) {
                 throw Error('failed to add itinerary in the cart!');
             }
@@ -172,11 +175,11 @@ Example:
             this.$.btnContinue.disabled = false;
         },
 
-        onAddCartError: function (e) {
-                
+        onAddCartError: function(e) {
+
         },
 
-        onBtnContinueClick: function () {
+        onBtnContinueClick: function() {
             if (this.$.btnContinue.disabled) {
                 return;
             }
@@ -201,5 +204,6 @@ Example:
             }
         }
     });
-    </script>
+</script>
+
 </dom-module>

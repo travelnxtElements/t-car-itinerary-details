@@ -102,7 +102,11 @@
 
           is: 't-car-itinerary-details',
 
-          observers : [
+          behaviors: [
+              TravelNxt.Behaviors.DateBehavior
+          ],
+
+          observers: [
               '_onItineraryUpdate(itinerary, searchCriteria)'
           ],
 
@@ -116,6 +120,10 @@
                   type: Object
               },
 
+              searchId: {
+                  type: String
+              },
+
               isCollapsible: {
                   type: Boolean,
                   value: false,
@@ -125,7 +133,7 @@
               _openCarCollapse: {
                   type: Boolean,
                   value: false
-              }      
+              }
           },
 
           _checkIfCollapsible: function(isCollapsible) {
@@ -138,8 +146,8 @@
               }
           }, 
 
-          _checkIfNotSpecified:  function(value){
-              if(!value){
+          _checkIfNotSpecified: function (value) {
+              if (!value) {
                   return false;
               }
               if (value.toLowerCase() === 'notspecified') {
@@ -148,7 +156,7 @@
               return true;
           },
 
-          _onItineraryUpdate: function(itinerary, searchCriteria) {
+          _onItineraryUpdate: function (itinerary, searchCriteria) {
               if (!itinerary || !searchCriteria) {
                   return;
               }
@@ -160,13 +168,12 @@
               if (!this.itinerary || !this.searchCriteria) {
                   return;
               }
-              this.gear = this.itinerary.transmission.toLowerCase() === 'automatic' ? 'Auto':this.itinerary.transmission;
+              this.gear = this.itinerary.transmission.toLowerCase() === 'automatic' ? 'Auto' : this.itinerary.transmission;
 
-              this.dropoffAddress = this.itinerary.pickupInfo.address === this.itinerary.dropoffInfo.address 
-                                  ? 'Same as pickup' 
+              this.dropoffAddress = this.itinerary.pickupInfo.address === this.itinerary.dropoffInfo.address
+                                  ? 'Same as pickup'
                                   : this.itinerary.dropoffInfo.address;
           }
-
       });
     </script>
 </dom-module>
