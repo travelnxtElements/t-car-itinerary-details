@@ -14,6 +14,12 @@
             margin: -5px var(--normal-spacing,10px) 0;
             border-bottom: 1px dotted;
          }
+         .techStopStar {
+            color: #cd0a0a;
+          }
+        .devider {
+            margin: 0 var(--normal-spacing,10px);
+        }
         </style>
         <template is="dom-if" if="[[!isCollapsible]]">
             <t-image sizing="contain" class="imageArea border-bottom" height="120" src="[[itinerary.heroImageUrl]]"></t-image>
@@ -94,6 +100,32 @@
                       <a class="link-style">Policy</a>
                   </div>
                 </div>
+                <template is="dom-if" if="[[addons.length]]">
+                    <div class="section-small secondary-text font-semi layout horizontal " on-tap="_toggleAddons">
+                        <div class="left-section flex">
+                            <div class="primary-text font-14">Optional Addons</div>
+                        </div>
+                        <div class="right-section">
+                            <iron-icon hidden$="[[_openAddons]]"  icon="icons:expand-more"></iron-icon>
+                            <iron-icon hidden$="[[!_openAddons]]" icon="icons:expand-less"></iron-icon>
+                        </div>
+                    </div>
+                    <div class="border-bottom devider"></div>
+                    <iron-collapse opened="[[_openAddons]]" id="addons">
+                        <template is="dom-repeat" items="{{addons}}">
+                            <div class="section-small layout horizontal secondary-text">
+                                <div class="left-section flex">
+                                    [[item.description]]
+                                </div>
+                                <div class="right-section">[[item.charge.amount.currency]]&nbsp;[[item.charge.amount.amount]]</div>
+                            </div>
+                            <div class="flex"></div>
+                        </template>
+                        <div class="secondary-text section-small">
+                            <span class="techStopStar font-bold">*</span> Car vendor provides above equipments on extra cost basis, though we cannot guarantee of availabilty. kindly recheck with the vendor directly.
+                        </div>
+                    </iron-collapse>
+                </template>
             </div>
         </iron-collapse>      
     </template>
@@ -133,7 +165,16 @@
               _openCarCollapse: {
                   type: Boolean,
                   value: false
-              }
+              },
+
+              _openAddons: {
+                  type: Boolean,
+                  value: false
+              }   
+          },
+
+          _toggleAddons: function () {
+              this._openAddons = !this._openAddons;
           },
 
           _checkIfCollapsible: function(isCollapsible) {
@@ -173,6 +214,10 @@
               this.dropoffAddress = this.itinerary.pickupInfo.address === this.itinerary.dropoffInfo.address
                                   ? 'Same as pickup'
                                   : this.itinerary.dropoffInfo.address;
+              
+              if (this.itinerary.optionalEquipment && this.itinerary.optionalEquipment.length) {
+                  this.addons = this.itinerary.optionalEquipment;
+              }
           }
       });
     </script>
