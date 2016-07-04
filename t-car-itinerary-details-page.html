@@ -57,7 +57,7 @@ Example:
         <t-car-itinerary-details id="itineraryView">
         </t-car-itinerary-details>
 
-        <t-button id="btnContinue" label="continue" on-tap="onPricingSuccess"></t-button>
+        <t-button id="btnContinue" label="continue" on-tap="onBtnContinueClick"></t-button>
 
     </template>
     <script>
@@ -114,9 +114,11 @@ Example:
         },
 
         _addItemToCart: function (itinerary, searchCriteria, visible) {
-        	if (!itinerary || !this.queryParams.searchId || !searchCriteria || !visible) {
+            if (!itinerary || !this.queryParams.searchId || !searchCriteria || !visible) {
                 return;
             }
+
+            this.$.btnContinue.disabled = true;
 
             if (itinerary.fare) {
                 itinerary.fare = null;
@@ -125,7 +127,7 @@ Example:
             this.$.itineraryView.itinerary = itinerary;
             this.$.itineraryView.searchCriteria = searchCriteria;
 
-    		this.$.removeCartItemApi.remove();
+            this.$.removeCartItemApi.remove();
         },
 
         _getItinerarySchedule: function () {
@@ -136,11 +138,11 @@ Example:
             this.$.addCartApi.add({
                 searchId: this.queryParams.searchId,
                 itineraryId: this.itinerary.id
-            });        	
+            });         
         },
 
         onRemoveCartError: function (e) {
-        	
+            
         },
 
         onAddCartSuccess: function (e) {
@@ -154,13 +156,18 @@ Example:
                 this.$.itineraryView.itinerary = addToCartItem.inventory;
                 this.itinerary.fare = addToCartItem.inventory.fare;
             }
+
+            this.$.btnContinue.disabled = false;
         },
 
         onAddCartError: function (e) {
                 
         },
 
-        onPricingSuccess: function () {            
+        onBtnContinueClick: function () {
+            if (this.$.btnContinue.disabled) {
+                return;
+            }
             this.fire('pricing-success');
         }
     });
