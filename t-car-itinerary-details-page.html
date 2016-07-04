@@ -132,6 +132,8 @@ Example:
                 return item.id === carId;
             });
 
+            this.$.fareDetails.data = null;
+
             this.$.btnContinue.disabled = true;
 
             if (this.itinerary.fare) {
