@@ -55,8 +55,7 @@ Example:
             on-t-shopping-cart-add-item-api-error="onAddCartError">
         </t-shopping-cart-add-item-api>
 
-        <t-car-itinerary-details id="itineraryView">
-        </t-car-itinerary-details>
+        <t-car-itinerary-details id="itineraryView"></t-car-itinerary-details>
 
         <t-faredetails 
           id="fareDetails"
@@ -122,7 +121,8 @@ Example:
             visible: {
                 type: Boolean,
                 value: false,
-                notify: true
+                notify: true,
+                observer: '_updateIsLoaded'
             },
 
             isLoaded: {
@@ -145,8 +145,7 @@ Example:
                 this.itinerary.fare = null;
             }
 
-            this.$.itineraryView.itinerary = this.itinerary;
-            this.$.itineraryView.searchCriteria = this.searchCriteria;
+            this.$.itineraryView.setDetails(this.itinerary);
 
             this.$.removeCartItemApi.remove();
         },
@@ -215,6 +214,12 @@ Example:
 
             if (this.itinerary.fare && this.itinerary.fare.components) {
                 this.$.fareDetails.data = this.itinerary.fare.components;
+            }
+        },
+
+        _updateIsLoaded: function (a, b) {
+            if (!this.visible && this.isLoaded === true) {
+                this._setIsLoaded(false);
             }
         },
 

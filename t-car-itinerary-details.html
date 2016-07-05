@@ -138,17 +138,9 @@
               TravelNxt.Behaviors.DateBehavior
           ],
 
-          observers: [
-              '_onItineraryUpdate(itinerary, searchCriteria)'
-          ],
-
           properties: {
 
               itinerary: {
-                  type: Object
-              },
-
-              searchCriteria: {
                   type: Object
               },
 
@@ -197,18 +189,13 @@
               return true;
           },
 
-          _onItineraryUpdate: function (itinerary, searchCriteria) {
-              if (!itinerary || !searchCriteria) {
+          setDetails: function (itinerary) {
+              if (!itinerary) {
                   return;
               }
 
-              this.setDetails();
-          },
+              this.itinerary = itinerary;
 
-          setDetails: function () {
-              if (!this.itinerary || !this.searchCriteria) {
-                  return;
-              }
               this.gear = this.itinerary.transmission.toLowerCase() === 'automatic' ? 'Auto' : this.itinerary.transmission;
 
               this.dropoffAddress = this.itinerary.pickupInfo.address === this.itinerary.dropoffInfo.address
