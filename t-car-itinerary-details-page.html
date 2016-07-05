@@ -66,13 +66,20 @@ Example:
 
         <t-button id="btnContinue" label="continue" on-tap="onBtnContinueClick"></t-button>
 
+        <t-sessionstorage
+            id="sessionStore"
+            key="Car_Result_Data"
+            api-url-format="[[apiUrlFormat]]"
+            on-t-sessionstorage-load-success="onSessionLoad">
+        </t-sessionstorage>
+
     </template>
 <script>
     Polymer({
         is: 't-car-itinerary-details-page',
 
         observers: [
-            '_addItemToCart(queryParams.carId,carResults)'
+            '_addItemToCart(itinerary, visible)'
         ],
 
         behaviors: [
@@ -102,8 +109,9 @@ Example:
                 type: String
             },
 
-            carResults: {
-                type: Object
+            itinerary: {
+                type: Object,
+                notify: true
             },
 
             searchCriteria: {
@@ -117,20 +125,17 @@ Example:
                 notify: true
             },
 
-            queryParams: {
-                type: Object,
-                notify: true
+            isLoaded: {
+                type: Boolean,
+                value: false,
+                readOnly: true
             }
         },
 
-        _addItemToCart: function(carId, carResults) {
-            if (!this.carResults || !this.queryParams.searchId || !this.searchCriteria || !carId) {
+        _addItemToCart: function (itinerary, visible) {
+            if (!itinerary || this.isLoaded || !this.searchId || !this.searchCriteria || !visible) {
                 return;
             }
-
-            this.itinerary = this.carResults.inventories.find(function(item) {
-                return item.id === carId;
-            });
 
             this.$.fareDetails.data = null;
 
@@ -152,7 +157,7 @@ Example:
 
         onRemoveCartSuccess: function(e) {
             this.$.addCartApi.add({
-                searchId: this.queryParams.searchId,
+                searchId: this.searchId,
                 itineraryId: this.itinerary.id
             });
         },
@@ -168,9 +173,16 @@ Example:
 
             var addToCartItem = e.detail.addToCartItemResult[0];
 
+            this._setIsLoaded(true);
+
+            this.itinerary = addToCartItem.inventory;
+            
+            this.$.sessionStore.value = this.itinerary;
+            this.$.sessionStore.save();
+
             if (addToCartItem.inventory) {
                 this.$.itineraryView.itinerary = addToCartItem.inventory;
-                this.itinerary.fare = addToCartItem.inventory.fare;
+                this.itinerary = addToCartItem.inventory;
                 this._setFareDetails();
             }
 
@@ -203,6 +215,12 @@ Example:
 
             if (this.itinerary.fare && this.itinerary.fare.components) {
                 this.$.fareDetails.data = this.itinerary.fare.components;
+            }
+        },
+
+        onSessionLoad: function () {
+            if (this.$.sessionStore.value) {
+                this.itinerary = this.$.sessionStore.value.itinerary;
             }
         }
     });
