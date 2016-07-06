@@ -71,7 +71,6 @@ Example:
             api-url-format="[[apiUrlFormat]]"
             on-t-sessionstorage-load-success="onSessionLoad">
         </t-sessionstorage>
-
     </template>
 <script>
     Polymer({
@@ -114,8 +113,7 @@ Example:
             },
 
             searchCriteria: {
-                type: Object,
-                value: null
+                type: Object
             },
 
             visible: {
@@ -145,7 +143,7 @@ Example:
                 this.itinerary.fare = null;
             }
 
-            this.$.itineraryView.setDetails(this.itinerary);
+            this.$.itineraryView.setDetails(this.itinerary, this.searchCriteria);
 
             this.$.removeCartItemApi.remove();
         },
@@ -203,12 +201,6 @@ Example:
             if (!this.itinerary || !this.searchCriteria) {
                 return;
             }
-
-            var formattedDate = this._getDateComponents(this.searchCriteria.pickupDate);
-            this.pickupDate = formattedDate.date + ' ' + formattedDate.shortMonth + ' ' + this.searchCriteria.pickupTime;
-
-            formattedDate = this._getDateComponents(this.searchCriteria.dropoffDate);
-            this.dropoffDate = formattedDate.date + ' ' + formattedDate.shortMonth + ' ' + this.searchCriteria.dropoffTime;
 
             this.$.fareDetails.baseFareLabel = 'Avg. per day rate x ' + this._dateDiff(this.pickupDate, this.dropoffDate);
 

@@ -1,5 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../t-image/t-image.html">
+<link rel="import" href="../t-shared-lib/t-date-behavior.html">
 
 <dom-module id="t-car-itinerary-details">
     <template>
@@ -79,7 +80,7 @@
                 </div>
                 <div class="secondary-text font-12">
                   <div class="section-small layout horizontal font-semi">
-                    <div class="primary-text font-14">Pick-up from</div>
+                    <div class="primary-text font-14">Pick-up <form></form></div>
                     <div class="flex"></div>
                     <div class="primary-light-text">[[pickupDate]]</div>
                   </div>
@@ -144,6 +145,10 @@
                   type: Object
               },
 
+              searchCriteria: {
+                  type: Object
+              },
+
               searchId: {
                   type: String
               },
@@ -189,18 +194,25 @@
               return true;
           },
 
-          setDetails: function (itinerary) {
-              if (!itinerary) {
+          setDetails: function (itinerary, searchCriteria) {
+              if (!itinerary || !searchCriteria) {
                   return;
               }
 
               this.itinerary = itinerary;
+              this.searchCriteria = searchCriteria;
 
               this.gear = this.itinerary.transmission.toLowerCase() === 'automatic' ? 'Auto' : this.itinerary.transmission;
 
               this.dropoffAddress = this.itinerary.pickupInfo.address === this.itinerary.dropoffInfo.address
                                   ? 'Same as pickup'
                                   : this.itinerary.dropoffInfo.address;
+
+              var formattedDate = this._getDateComponents(this.searchCriteria.pickupDate);
+              this.pickupDate = formattedDate.date + ' ' + formattedDate.shortMonth + ' ' + this.searchCriteria.pickupTime;
+
+              formattedDate = this._getDateComponents(this.searchCriteria.dropoffDate);
+              this.dropoffDate = formattedDate.date + ' ' + formattedDate.shortMonth + ' ' + this.searchCriteria.dropoffTime;
               
               if (this.itinerary.optionalEquipment && this.itinerary.optionalEquipment.length) {
                   this.addons = this.itinerary.optionalEquipment;
