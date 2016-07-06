@@ -112,9 +112,9 @@
                         </div>
                     </div>
                     <div class="border-bottom devider"></div>
-                    <iron-collapse opened="[[_openAddons]]" id="addons">
+                    <iron-collapse opened="[[_openAddons]]" id="addons" class="secondary-text font-14">
                         <template is="dom-repeat" items="{{addons}}">
-                            <div class="section-small layout horizontal secondary-text">
+                            <div class="section-small layout horizontal">
                                 <div class="left-section flex">
                                     [[item.description]]
                                 </div>
@@ -122,7 +122,7 @@
                             </div>
                             <div class="flex"></div>
                         </template>
-                        <div class="secondary-text section-small">
+                        <div class="font-12 section-small">
                             <span class="techStopStar font-bold">*</span> Car vendor provides above equipments on extra cost basis, though we cannot guarantee of availabilty. kindly recheck with the vendor directly.
                         </div>
                     </iron-collapse>
