@@ -20,6 +20,7 @@ Example:
 @demo demo/index.html
 -->
 <dom-module id="t-car-itinerary-details-page">
+
     <template>
         <style>
         :host {
@@ -72,155 +73,155 @@ Example:
             on-t-sessionstorage-load-success="onSessionLoad">
         </t-sessionstorage>
     </template>
-<script>
-    Polymer({
-        is: 't-car-itinerary-details-page',
 
-        observers: [
-            '_addItemToCart(itinerary, visible)'
-        ],
+    <script>
+        (function () {
 
-        behaviors: [
-              TravelNxt.Behaviors.DateBehavior
-        ],
+            'use strict'
 
-        properties: {
+            Polymer({
 
-            /*
-             * <p>This string is query string containing token value</p>
-             */
-            authToken: {
-                type: String
-            },
+                is: 't-car-itinerary-details-page',
 
-            /*
-             * <p>This property holds the value of api base URL</p>
-             */
-            apiBaseUrl: {
-                type: String
-            },
+                behaviors: [
+                      TravelNxt.Behaviors.DateBehavior
+                ],
 
-            /*
-             * <p>This property holds the value of web api URL format</p>
-             */
-            apiUrlFormat: {
-                type: String
-            },
+                properties: {
 
-            itinerary: {
-                type: Object,
-                notify: true
-            },
+                    /*
+                     * <p>This string is query string containing token value</p>
+                     */
+                    authToken: {
+                        type: String
+                    },
 
-            searchCriteria: {
-                type: Object
-            },
+                    /*
+                     * <p>This property holds the value of api base URL</p>
+                     */
+                    apiBaseUrl: {
+                        type: String
+                    },
 
-            visible: {
-                type: Boolean,
-                value: false,
-                notify: true,
-                observer: '_updateIsLoaded'
-            },
+                    /*
+                     * <p>This property holds the value of web api URL format</p>
+                     */
+                    apiUrlFormat: {
+                        type: String
+                    },
 
-            isLoaded: {
-                type: Boolean,
-                value: false,
-                readOnly: true
-            }
-        },
+                    itinerary: {
+                        type: Object,
+                        notify: true
+                    },
 
-        _addItemToCart: function (itinerary, visible) {
-            if (!itinerary || this.isLoaded || !this.searchId || !this.searchCriteria || !visible) {
-                return;
-            }
+                    itineraryId: {
+                        type: String,
+                        notify: true
+                    },
 
-            this.$.fareDetails.data = null;
+                    searchCriteria: {
+                        type: Object
+                    },
 
-            this.$.btnContinue.disabled = true;
+                    visible: {
+                        type: Boolean,
+                        value: false,
+                        notify: true
+                    }
+                },
 
-            if (this.itinerary.fare) {
-                this.itinerary.fare = null;
-            }
+                observers: [
+                    '_visibleChange(visible)',
+                    '_addItemToCart(itineraryId, authToken, searchId)'
+                ],
 
-            this.$.itineraryView.setDetails(this.itinerary, this.searchCriteria);
+                _visibleChange: function (visible) {
+                    if (visible && (!this.itinerary || !this.authToken || !this.searchId)) {
+                        this.fire('go-to-search');
+                    }
+                },
 
-            this.$.removeCartItemApi.remove();
-        },
+                _addItemToCart: function (itineraryId, authToken, searchId) {
+                    if (!itineraryId || !searchId || !authToken || !this.searchCriteria) {
+                        return;
+                    }
 
-        _getItinerarySchedule: function() {
+                    this.$.fareDetails.data = null;
 
-        },
+                    this.$.btnContinue.disabled = true;
 
-        onRemoveCartSuccess: function(e) {
-            this.$.addCartApi.add({
-                searchId: this.searchId,
-                itineraryId: this.itinerary.id
+                    this.$.itineraryView.setDetails(this.itinerary, this.searchCriteria);
+
+                    this.$.removeCartItemApi.remove();
+                },
+
+                _getItinerarySchedule: function() {
+
+                },
+
+                onRemoveCartSuccess: function(e) {
+                    this.$.addCartApi.add({
+                        searchId: this.searchId,
+                        itineraryId: this.itinerary.id
+                    });
+                },
+
+                onRemoveCartError: function(e) {
+
+                },
+
+                onAddCartSuccess: function(e) {
+                    if (!e.detail.addToCartItemResult || !e.detail.addToCartItemResult.length) {
+                        throw Error('failed to add itinerary in the cart!');
+                    }
+
+                    var addToCartItem = e.detail.addToCartItemResult[0];
+
+                    this.itinerary = addToCartItem.inventory;
+                    
+                    this.$.sessionStore.value = this.itinerary;
+                    
+                    this.$.sessionStore.save();
+
+                    if (addToCartItem.inventory) {
+                        this.$.itineraryView.itinerary = addToCartItem.inventory;
+                        this._setFareDetails();
+                    }
+
+                    this.$.btnContinue.disabled = false;
+                },
+
+                onAddCartError: function(e) {
+
+                },
+
+                onBtnContinueClick: function() {
+                    if (this.$.btnContinue.disabled) {
+                        return;
+                    }
+                    this.fire('pricing-success');
+                },
+
+                _setFareDetails: function () {
+                    if (!this.itinerary || !this.searchCriteria) {
+                        return;
+                    }
+
+                    this.$.fareDetails.baseFareLabel = 'Avg. per day rate x ' + this._dateDiff(this.searchCriteria.pickupDate, this.searchCriteria.dropoffDate);
+
+                    if (this.itinerary.fare && this.itinerary.fare.components) {
+                        this.$.fareDetails.data = this.itinerary.fare.components;
+                    }
+                },
+
+                onSessionLoad: function () {
+                    if (this.$.sessionStore.value) {
+                        this.itinerary = this.$.sessionStore.value.itinerary;
+                    }
+                }
             });
-        },
-
-        onRemoveCartError: function(e) {
-
-        },
-
-        onAddCartSuccess: function(e) {
-            if (!e.detail.addToCartItemResult || !e.detail.addToCartItemResult.length) {
-                throw Error('failed to add itinerary in the cart!');
-            }
-
-            var addToCartItem = e.detail.addToCartItemResult[0];
-
-            this._setIsLoaded(true);
-
-            this.itinerary = addToCartItem.inventory;
             
-            this.$.sessionStore.value = this.itinerary;
-            this.$.sessionStore.save();
-
-            if (addToCartItem.inventory) {
-                this.$.itineraryView.itinerary = addToCartItem.inventory;
-                this.itinerary = addToCartItem.inventory;
-                this._setFareDetails();
-            }
-
-            this.$.btnContinue.disabled = false;
-        },
-
-        onAddCartError: function(e) {
-
-        },
-
-        onBtnContinueClick: function() {
-            if (this.$.btnContinue.disabled) {
-                return;
-            }
-            this.fire('pricing-success');
-        },
-
-        _setFareDetails: function () {
-            if (!this.itinerary || !this.searchCriteria) {
-                return;
-            }
-
-            this.$.fareDetails.baseFareLabel = 'Avg. per day rate x ' + this._dateDiff(this.searchCriteria.pickupDate, this.searchCriteria.dropoffDate);
-
-            if (this.itinerary.fare && this.itinerary.fare.components) {
-                this.$.fareDetails.data = this.itinerary.fare.components;
-            }
-        },
-
-        _updateIsLoaded: function (a, b) {
-            if (!this.visible && this.isLoaded === true) {
-                this._setIsLoaded(false);
-            }
-        },
-
-        onSessionLoad: function () {
-            if (this.$.sessionStore.value) {
-                this.itinerary = this.$.sessionStore.value.itinerary;
-            }
-        }
-    });
-</script>
-
+        })();
+    </script>
 </dom-module>
