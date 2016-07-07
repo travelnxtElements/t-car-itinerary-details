@@ -202,7 +202,7 @@ Example:
                 return;
             }
 
-            this.$.fareDetails.baseFareLabel = 'Avg. per day rate x ' + this._dateDiff(this.pickupDate, this.dropoffDate);
+            this.$.fareDetails.baseFareLabel = 'Avg. per day rate x ' + this._dateDiff(this.searchCriteria.pickupDate, this.searchCriteria.dropoffDate);
 
             if (this.itinerary.fare && this.itinerary.fare.components) {
                 this.$.fareDetails.data = this.itinerary.fare.components;
