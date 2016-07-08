@@ -39,9 +39,9 @@ Example:
         <t-shopping-cart-remove-all-api
             id="removeCartItemApi" 
             loading={{loading}} 
-            api-base-url="{{apiBaseUrl}}" 
+            api-base-url="[[apiBaseUrl]]" 
             api-relative-url="api/ShoppingCart/remove/all" 
-            auth-token="{{authToken}}"
+            auth-token="[[authToken]]"
             on-t-shopping-cart-remove-all-api-success="onRemoveCartSuccess"
             on-t-shopping-cart-remove-all-api-error="onRemoveCartError">
         </t-shopping-cart-remove-all-api>
@@ -49,9 +49,9 @@ Example:
         <t-shopping-cart-add-item-api
             id="addCartApi" 
             loading={{loading}} 
-            api-base-url="{{apiBaseUrl}}" s
+            api-base-url="[[apiBaseUrl]]"
             api-relative-url="api/ShoppingCart/add" 
-            auth-token="{{authToken}}"
+            auth-token="[[authToken]]"
             on-t-shopping-cart-add-item-api-success="onAddCartSuccess"
             on-t-shopping-cart-add-item-api-error="onAddCartError">
         </t-shopping-cart-add-item-api>
@@ -133,16 +133,16 @@ Example:
 
                 observers: [
                     '_visibleChange(visible)',
-                    '_addItemToCart(itineraryId, authToken, searchId)'
+                    '_addItemToCart(authToken, itineraryId, searchId)'
                 ],
 
                 _visibleChange: function (visible) {
-                    if (visible && (!this.itinerary || !this.authToken || !this.searchId)) {
+                    if (visible && (!this.itineraryId || !this.searchId || !this.authToken || !this.searchCriteria)) {
                         this.fire('go-to-search');
                     }
                 },
 
-                _addItemToCart: function (itineraryId, authToken, searchId) {
+                _addItemToCart: function (authToken, itineraryId, searchId) {
                     if (!itineraryId || !searchId || !authToken || !this.searchCriteria) {
                         return;
                     }
