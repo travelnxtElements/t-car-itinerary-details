@@ -23,7 +23,7 @@
         }
         </style>
         <template is="dom-if" if="[[!isCollapsible]]">
-            <t-image sizing="contain" class="imageArea border-bottom" height="120" src="[[itinerary.heroImageUrl]]"></t-image>
+            <t-image loading-icon="[[carIcon]]" sizing="contain" class="imageArea border-bottom" height="120" src="[[itinerary.heroImageUrl]]"></t-image>
         </template>
         <div class="logo-area font-semi section-small primary-light-text layout horizontal" on-tap="_toggleDetails">
             <div class="left-section flex">
