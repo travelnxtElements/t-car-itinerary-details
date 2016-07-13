@@ -45,7 +45,6 @@ Example:
             auth-token="[[authToken]]"
             search-id="[[searchId]]"
             inventory-id="[[itineraryId]]"
-            policies="[[itinerary.generalPolicies]]"
             is-data-provided-by-view>
         </t-policy>
 
@@ -200,6 +199,9 @@ Example:
                     var addToCartItem = e.detail.addToCartItemResult[0];
 
                     this.itinerary = addToCartItem.inventory;
+
+                    //set policies
+                    this.$.policy.policies = this.itinerary.generalPolicies;
                     
                     this.$.sessionStore.value = this.itinerary;
                     
