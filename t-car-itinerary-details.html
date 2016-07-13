@@ -98,7 +98,7 @@
                       <div class="margin-bottom font-14">
                         [[dropoffAddress]]
                       </div>
-                      <a class="link-style">Policy</a>
+                      <a class="link-style" on-tap="_policyClick">Policy</a>
                   </div>
                 </div>
                 <template is="dom-if" if="[[addons.length]]">
@@ -172,6 +172,10 @@
 
           _toggleAddons: function () {
               this._openAddons = !this._openAddons;
+          },
+
+          _policyClick: function () {
+              this.fire('policy-click', { itineraryId: this.itinerary.id });
           },
 
           _checkIfCollapsible: function(isCollapsible) {
