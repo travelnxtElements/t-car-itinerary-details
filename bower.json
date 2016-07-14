@@ -1,6 +1,6 @@
 {
   "name": "t-car-itinerary-details",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "authors": [
     "Manoj Chalode <chalodem@gmail.com>"
   ],
@@ -11,7 +11,6 @@
     "t-notify": "atomelements/t-notify#^1.1.1",
     "t-shared-lib": "travelnxtelements/t-shared-lib#^1.0.2",
     "t-image": "atomelements/t-image#^1.2.1",
-    "t-notify": "atomelements/t-notify#^1.1.1",
     "t-faredetails": "travelnxtelements/t-faredetails#^1.1.0"
   },
   "devDependencies": {
