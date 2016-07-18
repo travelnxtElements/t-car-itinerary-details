@@ -171,6 +171,8 @@ Example:
                     }
 
                     this.$.fareDetails.data = null;
+                    this.$.fareDetails.$.loaderContainer.hidden = false;
+                    this.$.fareDetails.error = false;
 
                     this.$.btnContinue.disabled = true;
 
@@ -179,23 +181,25 @@ Example:
                     this.$.removeCartItemApi.remove();
                 },
 
-                _getItinerarySchedule: function() {
+                _getItinerarySchedule: function () {
 
                 },
 
-                onRemoveCartSuccess: function(e) {
+                onRemoveCartSuccess: function (e) {
                     this.$.addCartApi.add({
                         searchId: this.searchId,
                         itineraryId: this.itinerary.id
                     });
                 },
 
-                onRemoveCartError: function(e) {
-
+                onRemoveCartError: function (e) {
+                    this.$.fareDetails.error = true;
+                    this.$.policy.onPolicyError();
                 },
 
-                onAddCartSuccess: function(e) {
+                onAddCartSuccess: function (e) {
                     if (!e.detail.addToCartItemResult || !e.detail.addToCartItemResult.length) {
+                        this.$.fareDetails.error = true;
                         throw Error('failed to add itinerary in the cart!');
                     }
 
@@ -205,9 +209,9 @@ Example:
 
                     //set policies
                     this.$.policy.policies = this.itinerary.generalPolicies;
-                    
+
                     this.$.sessionStore.value = this.itinerary;
-                    
+
                     this.$.sessionStore.save();
 
                     if (addToCartItem.inventory) {
@@ -217,12 +221,13 @@ Example:
 
                     this.$.btnContinue.disabled = false;
                 },
-
-                onAddCartError: function(e) {
+                
+                onAddCartError: function (e) {
+                    this.$.fareDetails.error = true;
                     this.$.policy.onPolicyError();
                 },
 
-                onBtnContinueClick: function() {
+                onBtnContinueClick: function () {
                     if (this.$.btnContinue.disabled) {
                         return;
                     }
@@ -247,7 +252,7 @@ Example:
                     }
                 }
             });
-            
+
         })();
     </script>
 </dom-module>
