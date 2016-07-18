@@ -160,6 +160,9 @@ Example:
                     if (visible && (!this.itineraryId || !this.searchId || !this.authToken || !this.searchCriteria)) {
                         this.fire('go-to-search');
                     }
+
+                    //initiate policy component
+                    this.$.policy.initiatePolicyView();
                 },
 
                 _addItemToCart: function (authToken, itineraryId, searchId) {
@@ -216,7 +219,7 @@ Example:
                 },
 
                 onAddCartError: function(e) {
-
+                    this.$.policy.onPolicyError();
                 },
 
                 onBtnContinueClick: function() {
