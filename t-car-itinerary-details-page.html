@@ -5,21 +5,56 @@
 <link rel="import" href="t-shopping-cart-remove-all-api.html">
 <link rel="import" href="t-shopping-cart-add-item-api.html">
 <link rel="import" href="t-car-itinerary-details.html">
+
 <!--
-A comment describing this element
+    <h3>Details:</h3>
 
-Example:
+        `t-car-itinerary-details-page` displays details of selected car to be booked.
 
-    <my-elem></my-elem>
+        It uses following child components in it -
+            1. `t-notify`
+            2. `t-header`
+            3. `t-policy`
+            4. `t-shopping-cart-remove-all-api`
+            5. `t-shopping-cart-add-item-api`
+            6. `t-faredetails`
+            7. `t-car-itinerary-details`
+            8. `t-button`
+            9. `t-sessionstorage`
 
-Example:
+    <h3>Observers:</h3>
 
-    <my-elem>
-      <h2>Hello my-elem</h2>
-    </my-elem>
+            1. '_visibleChange(visible)',
+            2. '_addItemToCart(authToken, itineraryId, searchId)'
 
-@demo demo/index.html
+    <h3>Events:</h3>
+
+        following events are fired by this component
+
+            1. 'pricing-success' - fired when reviewed itinerary is selected for booking.
+            3. `go-to-search` - fired when page is loaded without required page data.
+
+    <h3>Example:</h3>
+
+        <t-car-itinerary-details-page
+            id="carDetails"
+            api-base-url="[[apiBaseUrl]]"
+            auth-token="[[authToken]]"
+            api-url-format="[[apiUrlFormat]]"
+            search-criteria="[[searchCriteria]]"
+            search-id="[[searchId]]"
+            car-icon="[[carIcon]]"
+            itinerary="{{selectedItinerary}}"
+            itinerary-id="[[itineraryId]]"
+            on-pricing-success="_goToPassengerInfo">
+            <t-header icon="bgv:arrow-left" normal-heading label="Review Itinerary"  url="[[siteUrl]]car/results">
+                <t-car-search-recap data="[[searchCriteria]]"></t-car-search-recap>
+            </t-header>
+        </t-car-itinerary-details-page>
+
+    @demo demo/index.html
 -->
+
 <dom-module id="t-car-itinerary-details-page">
 
     <template>
@@ -122,20 +157,34 @@ Example:
                         type: String
                     },
 
+                    /*
+                     * <p>This property holds the value of selected car itinerary</p>
+                     */
                     itinerary: {
                         type: Object,
                         notify: true
                     },
 
+                    /*
+                     * <p>This property holds the value of selected itinerary id</p>
+                     */
                     itineraryId: {
                         type: String,
                         notify: true
                     },
 
+                    /*
+                     * <p>This property holds the value of search criteria</p>
+                     */
                     searchCriteria: {
                         type: Object
                     },
 
+
+                    /*
+                     * <p>This is a notification flag to indicate current page state</p>
+                     * <p>Set it to true if page needs to be displayed on browser</p>
+                    */
                     visible: {
                         type: Boolean,
                         value: false,
@@ -152,10 +201,16 @@ Example:
                     'policy-click': '_initiatePolicyCall'
                 },
 
+                /*
+                 * <p>event handler to reset policy view</p>
+                */
                 _initiatePolicyCall: function (event) {
                     this.$.policy.initiatePolicyCall();
                 },
 
+                /*
+                 * <p>observer function for page `visible` property</p>
+                */
                 _visibleChange: function (visible) {
                     if (visible && (!this.itineraryId || !this.searchId || !this.authToken || !this.searchCriteria)) {
                         this.fire('go-to-search');
@@ -165,6 +220,9 @@ Example:
                     this.$.policy.initiatePolicyView();
                 },
 
+                /*
+                 * <p>observer function for page `authToken`, `itineraryId`, `searchId` property</p>
+                */
                 _addItemToCart: function (authToken, itineraryId, searchId) {
                     if (!itineraryId || !searchId || !authToken || !this.searchCriteria) {
                         return;
@@ -181,10 +239,9 @@ Example:
                     this.$.removeCartItemApi.remove();
                 },
 
-                _getItinerarySchedule: function () {
-
-                },
-
+                /*
+                 * <p>success callback handler for `t-shopping-cart-remove-all-api` component</p>
+                */
                 onRemoveCartSuccess: function (e) {
                     this.$.addCartApi.add({
                         searchId: this.searchId,
@@ -192,11 +249,17 @@ Example:
                     });
                 },
 
+                /*
+                 * <p>error callback handler for `t-shopping-cart-remove-all-api` component</p>
+                */
                 onRemoveCartError: function (e) {
                     this.$.fareDetails.error = true;
                     this.$.policy.onPolicyError();
                 },
 
+                /*
+                 * <p>success callback handler for `t-shopping-cart-add-item-api` component</p>
+                */
                 onAddCartSuccess: function (e) {
                     if (!e.detail.addToCartItemResult || !e.detail.addToCartItemResult.length) {
                         this.$.fareDetails.error = true;
@@ -221,12 +284,18 @@ Example:
 
                     this.$.btnContinue.disabled = false;
                 },
-                
+
+                /*
+                 * <p>error callback handler for `t-shopping-cart-add-item-api` component</p>
+                */
                 onAddCartError: function (e) {
                     this.$.fareDetails.error = true;
                     this.$.policy.onPolicyError();
                 },
 
+                /*
+                 * <p>continue button tap event handler</p>
+                */
                 onBtnContinueClick: function () {
                     if (this.$.btnContinue.disabled) {
                         return;
@@ -234,6 +303,9 @@ Example:
                     this.fire('pricing-success');
                 },
 
+                /*
+                 * <p>translator method to set view components data</p>
+                */
                 _setFareDetails: function () {
                     if (!this.itinerary || !this.searchCriteria) {
                         return;
@@ -246,6 +318,9 @@ Example:
                     }
                 },
 
+                /*
+                 * <p>`t-sessionstorage` load success callback handler</p>
+                */
                 onSessionLoad: function () {
                     if (this.$.sessionStore.value) {
                         this.itinerary = this.$.sessionStore.value.itinerary;

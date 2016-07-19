@@ -4,39 +4,7 @@
 <!--
     <h3>Details:</h3>
 
-        `t-shopping-cart-remove-all-api` is a car search api component integrated with mystique apis.
-
-        It fires mystique search call and returns `searchId` upon successful opearion
-
-    <h3>Object Structure:</h3>
-
-        1. This component uses following request format to search cars -
-
-            var request = {
-                "productType": "car",
-                "pickupLocation": {
-                    "name": "McCarran International Airport",
-                    "geoCode": "36.0854,-115.15",
-                    "type": "Airport",
-                    "code": "LAS",
-                    "formattedAddress": "Las Vegas, NV, United States - McCarran International Airport (LAS)"
-                },
-                "pickupDate": {
-                    "date": "06/23/2016",
-                    "time": "11 AM"
-                },
-                "dropoffDate": {
-                    "date": "06/25/2016",
-                    "time": "12 AM"
-                },
-                "dropoffLocation": {
-                    "name": "McCarran International Airport",
-                    "geoCode": "36.0854,-115.15",
-                    "type": "Airport",
-                    "code": "LAS",
-                    "formattedAddress": "Las Vegas, NV, United States - McCarran International Airport (LAS)"
-                }
-            };
+        `t-shopping-cart-remove-all-api` components removes all selected itineraries from shopping cart.
 
     <h3>Events:</h3>
 
@@ -47,14 +15,14 @@
 
     <h3>Example:</h3>
 
-        <t-shopping-cart-remove-all-api 
-            id="searchApi" 
+        <t-shopping-cart-remove-all-api
+            id="removeCartItemApi" 
             loading={{loading}} 
-            api-base-url="{{apiBaseUrl}}" 
-            api-relative-url="api/Car/search" 
-            auth-token="{{authToken}}"
-            on-t-shopping-cart-remove-all-api-success="onSearchSuccess"
-            on-t-shopping-cart-remove-all-api-error="onSearchError">
+            api-base-url="[[apiBaseUrl]]" 
+            api-relative-url="api/ShoppingCart/remove/all" 
+            auth-token="[[authToken]]"
+            on-t-shopping-cart-remove-all-api-success="onRemoveCartSuccess"
+            on-t-shopping-cart-remove-all-api-error="onRemoveCartError">
         </t-shopping-cart-remove-all-api>
 
     @demo demo/index.html
@@ -82,7 +50,7 @@
         },
 
         /*
-         * <p>Method to search cars</p>
+         * <p>Method to remove all itineraries from shopping cart</p>
          */
         remove: function() {
 
