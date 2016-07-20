@@ -1,5 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../t-notify/t-notify.html">
+<link rel="import" href="../t-button/t-button.html">
 <link rel="import" href="../t-policy/t-policy.html">
 <link rel="import" href="../t-image/t-image.html">
 <link rel="import" href="../t-shared-lib/t-date-behavior.html">
@@ -9,6 +10,8 @@
 <link rel="import" href="t-shopping-cart-remove-all-api.html">
 <link rel="import" href="t-shopping-cart-add-item-api.html">
 <link rel="import" href="t-car-itinerary-details.html">
+<link rel="import" href="../t-text-container/travel-element-styles.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html"/>
 
 <!--
     <h3>Details:</h3>
@@ -62,14 +65,16 @@
 <dom-module id="t-car-itinerary-details-page">
 
     <template>
-        <style>
-        :host {
-            display: block;
-        }
-        #btnContinue{
-            display: block;
-            margin: var(--normal-spacing,10px);
-        }
+        <style include="iron-flex"></style>
+        <style include="travel-element-styles">
+            :host {
+                display: block;
+            }
+
+            #btnContinue{
+                display: block;
+                margin: var(--normal-spacing,10px);
+            }
         </style>
 
         <content select="t-header"></content>
@@ -115,7 +120,7 @@
           itinerary-fare-label="Car Rental">
         </t-faredetails>
 
-        <t-button id="btnContinue" label="continue" on-tap="onBtnContinueClick"></t-button>
+        <t-button id="btnContinue" class="primary flex" label="continue" on-tap="onBtnContinueClick"></t-button>
 
         <t-sessionstorage
             id="sessionStore"
