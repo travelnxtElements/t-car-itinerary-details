@@ -12,7 +12,11 @@
     "t-policy": "travelnxtElements/t-policy#^1.0.0",
     "t-shared-lib": "travelnxtelements/t-shared-lib#^1.0.2",
     "t-image": "atomelements/t-image#^1.2.1",
-    "t-faredetails": "travelnxtelements/t-faredetails#^1.1.0"
+    "t-faredetails": "travelnxtelements/t-faredetails#^1.1.0",
+    "t-sessionstorage": "travelnxtElements/t-sessionstorage#^1.0.0",
+    "iron-flex-layout": "PolymerElements/iron-flex-layout#^1.2.1",
+    "juicy-html": "Juicy/juicy-html#^1.0.2",
+    "t-car-result-item": "travelnxtElements/t-car-result-item#^1.0.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
@@ -20,7 +24,8 @@
     "web-component-tester": "^4.0.0",
     "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0",
     "t-text-container": "travelnxtelements/t-text-container#^1.1.0",
-    "t-shared-components": "atomelements/t-shared-components#^1.0.5"
+    "t-shared-components": "atomelements/t-shared-components#^1.0.5",
+    "t-header": "travelnxtElements/t-header#^1.0.0"
   },
   "resolutions": {
     "t-shared-lib": "^1.0.0",
