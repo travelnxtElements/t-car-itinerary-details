@@ -70,19 +70,42 @@
                 return;
             }
 
-            var data = {
-                itemInfos: [{
-                    searchId: request.searchId,
-                    inventoryId: request.itineraryId
-                }]
-            };
-
             if (this._validateApiMeta()) {
                 this.$.ajaxCall.url = this._getUrl();
-                this.$.ajaxCall.body = JSON.stringify(data);
+                this.$.ajaxCall.body = JSON.stringify(this._buildRequest(request));
                 this.$.ajaxCall.generateRequest();
             }
         },
+
+        _buildRequest: function (request) {
+
+            if (!request) {
+                return null;
+            }
+
+            var inventoryInfo = {
+                searchId: request.searchId,
+                inventoryId: request.itineraryId
+            };
+
+            if (request.itineraryType.toLowerCase() === 'activity') {
+                if (request.selectedOption) {
+                    inventoryInfo.selectedOption = {
+                        id: request.selectedOption.id,
+                        selectedDate: request.selectedOption.selectedDateTime
+                    }
+                }
+
+                if (request.passengers) {
+                    inventoryInfo.selectedOption.passengers = request.passengers
+                }
+            }
+
+            return {
+                itemInfos: [inventoryInfo]
+            };
+        },
+
         /*
          * <p>Success callback</p>
          */
