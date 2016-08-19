@@ -145,28 +145,28 @@
                 properties: {
 
                     /*
-                     * <p>This string is query string containing token value</p>
+                     * This string is query string containing token value
                      */
                     authToken: {
                         type: String
                     },
 
                     /*
-                     * <p>This property holds the value of api base URL</p>
+                     * This property holds the value of api base URL
                      */
                     apiBaseUrl: {
                         type: String
                     },
 
                     /*
-                     * <p>This property holds the value of web api URL format</p>
+                     * This property holds the value of web api URL format
                      */
                     apiUrlFormat: {
                         type: String
                     },
 
                     /*
-                     * <p>This property holds the value of selected car itinerary</p>
+                     * This property holds the value of selected car itinerary
                      */
                     itinerary: {
                         type: Object,
@@ -174,7 +174,7 @@
                     },
 
                     /*
-                     * <p>This property holds the value of selected itinerary id</p>
+                     * This property holds the value of selected itinerary id
                      */
                     itineraryId: {
                         type: String,
@@ -182,7 +182,7 @@
                     },
 
                     /*
-                     * <p>This property holds the value of search criteria</p>
+                     * This property holds the value of search criteria
                      */
                     searchCriteria: {
                         type: Object
@@ -190,8 +190,8 @@
 
 
                     /*
-                     * <p>This is a notification flag to indicate current page state</p>
-                     * <p>Set it to true if page needs to be displayed on browser</p>
+                     * This is a notification flag to indicate current page state
+                     * Set it to true if page needs to be displayed on browser
                     */
                     visible: {
                         type: Boolean,
@@ -210,14 +210,14 @@
                 },
 
                 /*
-                 * <p>event handler to reset policy view</p>
+                 * event handler to reset policy view
                 */
                 _initiatePolicyCall: function (event) {
                     this.$.policy.initiatePolicyCall();
                 },
 
                 /*
-                 * <p>observer function for page `visible` property</p>
+                 * observer function for page `visible` property
                 */
                 _visibleChange: function (visible) {
                     if (visible && (!this.itineraryId || !this.searchId || !this.authToken || !this.searchCriteria)) {
@@ -229,7 +229,7 @@
                 },
 
                 /*
-                 * <p>observer function for page `authToken`, `itineraryId`, `searchId` property</p>
+                 * observer function for page `authToken`, `itineraryId`, `searchId` property
                 */
                 _addItemToCart: function (authToken, itineraryId, searchId) {
                     if (!itineraryId || !searchId || !authToken || !this.searchCriteria) {
@@ -250,17 +250,30 @@
                 },
 
                 /*
-                 * <p>success callback handler for `t-shopping-cart-remove-all-api` component</p>
+                 * success callback handler for `t-shopping-cart-remove-all-api` component
                 */
                 onRemoveCartSuccess: function (e) {
-                    this.$.addCartApi.add({
-                        searchId: this.searchId,
-                        itineraryId: this.itinerary.id
-                    });
+                    this.$.addCartApi.add(this._buildAddCartRequest());
                 },
 
                 /*
-                 * <p>error callback handler for `t-shopping-cart-remove-all-api` component</p>
+                 * builds request for add to cart api call
+                */
+                _buildAddCartRequest: function () {
+
+                    //this is translator part, we can move it to translator
+                    //kept it here because translation is simple
+
+                    return {
+                        itemInfos: [{
+                            searchId: this.searchId,
+                            inventoryId: this.itinerary.id
+                        }]
+                    }
+                },
+
+                /*
+                 * error callback handler for `t-shopping-cart-remove-all-api` component
                 */
                 onRemoveCartError: function (e) {
                     this.$.fareDetails.error = true;
@@ -268,7 +281,7 @@
                 },
 
                 /*
-                 * <p>success callback handler for `t-shopping-cart-add-item-api` component</p>
+                 * success callback handler for `t-shopping-cart-add-item-api` component
                 */
                 onAddCartSuccess: function (e) {
                     if (!e.detail.addToCartItemResult || !e.detail.addToCartItemResult.length) {
@@ -296,7 +309,7 @@
                 },
 
                 /*
-                 * <p>error callback handler for `t-shopping-cart-add-item-api` component</p>
+                 * error callback handler for `t-shopping-cart-add-item-api` component
                 */
                 onAddCartError: function (e) {
                     this.$.fareDetails.error = true;
@@ -304,7 +317,7 @@
                 },
 
                 /*
-                 * <p>continue button tap event handler</p>
+                 * continue button tap event handler
                 */
                 onBtnContinueClick: function () {
                     if (this.$.btnContinue.disabled) {
@@ -314,7 +327,7 @@
                 },
 
                 /*
-                 * <p>translator method to set view components data</p>
+                 * translator method to set view components data
                 */
                 _setFareDetails: function () {
                     if (!this.itinerary || !this.searchCriteria) {
@@ -329,7 +342,7 @@
                 },
 
                 /*
-                 * <p>`t-sessionstorage` load success callback handler</p>
+                 * `t-sessionstorage` load success callback handler
                 */
                 onSessionLoad: function () {
                     if (this.$.sessionStore.value) {
