@@ -11,6 +11,8 @@
 <link rel="import" href="t-car-itinerary-details.html">
 <link rel="import" href="../t-text-container/travel-element-styles.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html"/>
+<link rel="import" href="../t-behavior/t-page-behavior.html">
+<link rel="import" href="../t-behavior/t-session-behavior.html"/>
 
 <!--
     <h3>Details:</h3>
@@ -123,9 +125,9 @@
 
         <t-sessionstorage
             id="sessionStore"
-            key="Car_Result_Data"
             api-url-format="[[apiUrlFormat]]"
-            on-t-sessionstorage-load-success="onSessionLoad">
+            on-t-sessionstorage-load-success="_onSessionGet"
+            on-t-sessionstorage-save-success="_onSessionSave">
         </t-sessionstorage>
     </template>
 
@@ -139,100 +141,44 @@
                 is: 't-car-itinerary-details-page',
 
                 behaviors: [
-                      TravelNxt.Behaviors.DateBehavior
+                    TravelNxt.Behaviors.DateBehavior,
+                    TravelNxt.Behaviors.PageBehavior,
+                    TravelNxt.Behaviors.SessionBehavior
                 ],
 
                 properties: {
-
-                    /*
-                     * This string is query string containing token value
-                     */
-                    authToken: {
-                        type: String
-                    },
-
-                    /*
-                     * This property holds the value of api base URL
-                     */
-                    apiBaseUrl: {
-                        type: String
-                    },
-
-                    /*
-                     * This property holds the value of web api URL format
-                     */
-                    apiUrlFormat: {
-                        type: String
-                    },
-
-                    /*
-                     * This property holds the value of selected car itinerary
-                     */
-                    itinerary: {
-                        type: Object,
-                        notify: true
-                    },
-
-                    /*
-                     * This property holds the value of selected itinerary id
-                     */
-                    itineraryId: {
-                        type: String,
-                        notify: true
-                    },
-
-                    /*
-                     * This property holds the value of search criteria
-                     */
-                    searchCriteria: {
-                        type: Object
-                    },
-
-
-                    /*
-                     * This is a notification flag to indicate current page state
-                     * Set it to true if page needs to be displayed on browser
-                    */
-                    visible: {
-                        type: Boolean,
-                        value: false,
-                        notify: true
-                    }
                 },
 
                 observers: [
-                    '_visibleChange(visible)',
-                    '_addItemToCart(authToken, itineraryId, searchId)'
+                    '__pageLoad(visible)',
+                    '__updatePage(itineraryId)'
                 ],
 
                 listeners: {
-                    'policy-click': '_initiatePolicyCall'
-                },
-
-                /*
-                 * event handler to reset policy view
-                */
-                _initiatePolicyCall: function (event) {
-                    this.$.policy.initiatePolicyCall();
+                    'policy-click': '_initiatePolicyCall',
+                    'session-get-complete': '_onSessionGetComplete'
                 },
 
                 /*
                  * observer function for page `visible` property
                 */
-                _visibleChange: function (visible) {
-                    if (visible && (!this.itineraryId || !this.searchId || !this.authToken || !this.searchCriteria)) {
-                        this.fire('go-to-search');
+                __pageLoad: function (visible) {
+                    if (!visible) {
+                        return;
                     }
 
                     //initiate policy component
                     this.$.policy.initiatePolicyView();
+
+                    this._syncSession();
                 },
 
                 /*
                  * observer function for page `authToken`, `itineraryId`, `searchId` property
                 */
-                _addItemToCart: function (authToken, itineraryId, searchId) {
-                    if (!itineraryId || !searchId || !authToken || !this.searchCriteria) {
+                __updatePage: function (itineraryId) {
+
+                    if (!itineraryId) {
                         return;
                     }
 
@@ -247,6 +193,37 @@
                     this.$.itineraryView.setDetails(this.itinerary, this.searchCriteria);
 
                     this.$.removeCartItemApi.remove();
+                },
+
+                _onSessionGetComplete: function () {
+                    if (!this.itinerary || !this.searchId || !this.searchCriteria) {
+                        this.fire('go-to-search');
+                    }
+
+                    this.itineraryId = this.itinerary.id;
+
+                },
+
+                _syncSession: function () {
+                    this._data = [{
+                        key: 'Car_Search_Criteria',
+                        propertyName: 'searchCriteria'
+                    }, {
+                        key: 'Car_Search_Id',
+                        propertyName: 'searchId'
+                    }, {
+                        key: 'Car_Itinerary',
+                        propertyName: 'itinerary'
+                    }];
+
+                    this.getSession();
+                },
+
+                /*
+                 * event handler to reset policy view
+                */
+                _initiatePolicyCall: function (event) {
+                    this.$.policy.initiatePolicyCall();
                 },
 
                 /*
@@ -296,9 +273,12 @@
                     //set policies
                     this.$.policy.policies = this.itinerary.generalPolicies;
 
-                    this.$.sessionStore.value = this.itinerary;
+                    this._data = [{
+                        key: 'Car_Itinerary',
+                        value: this.itinerary
+                    }];
 
-                    this.$.sessionStore.save();
+                    this.setSession();
 
                     if (addToCartItem.inventory) {
                         this.$.itineraryView.itinerary = addToCartItem.inventory;
