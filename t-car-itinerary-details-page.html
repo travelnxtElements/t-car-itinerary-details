@@ -271,6 +271,9 @@
 
                     this.itinerary = addToCartItem.inventory;
 
+                    //detect fare change
+                    this.fareChange = e.detail.addToCartItemResult[0].fareChange;
+
                     //set policies
                     this.$.policy.policies = this.itinerary.generalPolicies;
 
@@ -319,6 +322,7 @@
 
                     if (this.itinerary.fare && this.itinerary.fare.components) {
                         this.$.fareDetails.data = this.itinerary.fare.components;
+                        this.$.fareDetails.fareChange = this.fareChange;
                     }
                 },
 
