@@ -85,6 +85,7 @@
         <t-policy id="policy"
             external-link
             label="Policies"
+            policy-failed="[[_showPolicyError]]"
             api-relative-url="api/ShoppingCart/add"
             api-base-url="[[apiBaseUrl]]"
             auth-token="[[authToken]]"
@@ -148,6 +149,10 @@
                 ],
 
                 properties: {
+                    _showPolicyError: {
+                        type: Boolean,
+                        value: false
+                    }
                 },
 
                 observers: [
@@ -186,6 +191,8 @@
                     this.$.fareDetails.data = null;
                     this.$.fareDetails.$.loaderContainer.hidden = false;
                     this.$.fareDetails.error = false;
+
+                    this._showPolicyError = false;
 
                     this.$.policy.policies = null;
 
@@ -275,7 +282,11 @@
                     this.fareChange = e.detail.addToCartItemResult[0].fareChange;
 
                     //set policies
-                    this.$.policy.policies = this.itinerary.generalPolicies;
+                    if (this.itinerary.generalPolicies && this.itinerary.generalPolicies.length) {
+                        this.$.policy.policies = this.itinerary.generalPolicies;
+                    } else {
+                        this._showPolicyError = true;
+                    }
 
                     this._data = [{
                         key: 'Car_Itinerary',
