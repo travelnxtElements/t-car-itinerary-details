@@ -19,7 +19,7 @@
     "juicy-html": "Juicy/juicy-html#^1.0.2",
     "t-car-result-item": "travelnxtElements/t-car-result-item#^1.0.0",
     "iron-collapse": "PolymerElements/iron-collapse#^1.2.0",
-    "t-api-components": "travelnxtelements/t-api-components#master"
+    "t-api-components": "travelnxtelements/t-api-components#^1.0.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
